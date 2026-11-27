@@ -1,0 +1,30 @@
+services:
+  postgresql:
+    image: postgres:16-alpine
+    environment: {POSTGRES_PASSWORD: pgpass, POSTGRES_USER: authentik, POSTGRES_DB: authentik}
+    healthcheck: {test: ["CMD-SHELL","pg_isready -U authentik"], interval: 5s, retries: 10}
+  server:
+    image: authentik/server:2026.8.6
+    command: server
+    environment: &env
+      AUTHENTIK_SECRET_KEY: change-me-dev-only-0000000000000000000000000
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: pgpass
+      AUTHENTIK_BOOTSTRAP_PASSWORD: akadmin-dev
+      AUTHENTIK_BOOTSTRAP_TOKEN: dev-token-change-me
+      AUTHENTIK_BOOTSTRAP_EMAIL: admin@example.org
+      AUTHENTIK_LISTEN__HTTP: 0.0.0.0:9000
+      AUTHENTIK_LISTEN__HTTPS: 0.0.0.0:9443
+      AUTHENTIK_LISTEN__METRICS: 0.0.0.0:9300
+      AUTHENTIK_LISTEN__DEBUG: 0.0.0.0:9900
+      AUTHENTIK_LISTEN__DEBUG_PY: 0.0.0.0:9901
+    ports: ["9000:9000"]
+    depends_on: {postgresql: {condition: service_healthy}}
+  worker:
+    image: authentik/server:2026.8.6
+    command: worker
+    environment: *env
+    user: root
+    depends_on: {postgresql: {condition: service_healthy}}
