@@ -1,0 +1,774 @@
+/*
+ * Nohriancons × authentik — thème « Sakura » des flows de connexion
+ * ------------------------------------------------------------------
+ * À coller dans : Admin authentik > Système > Brands > (ta brand) > Custom CSS.
+ *
+ * Vérifié sur authentik 2026.8.7. authentik injecte ce CSS dans le document ET
+ * dans chaque shadow root de ses web components : chaque règle ci-dessous ne
+ * s'applique donc qu'aux éléments du shadow root où elle trouve une
+ * correspondance. Les commentaires « [racine : …] » indiquent dans quel
+ * composant vit l'élément ciblé.
+ *
+ * Textes et réglages propres à ton instance : section 1 (variables --nds-*).
+ */
+
+/* ==========================================================================
+   1. Réglages et design tokens
+   ========================================================================== */
+
+:root,
+:host {
+    /* --- Textes ajoutés par le thème (mettre `none` pour masquer) --- */
+    --nds-source-label: "Continuer avec Service lié";
+    --nds-source-intro: "Ton compte Service lié te connecte ici aussi.";
+    --nds-source-domain: "auth.service-lie.fr";
+    --nds-form-heading: "Avec ton identifiant";
+
+    /* --- Couleurs --- */
+    --nds-bg-page: #0b151c;
+    --nds-bg-sunken: #070e13;
+    --nds-surface-1: #0f1c25;
+    --nds-surface-2: #14242f;
+    --nds-frame-bg: rgba(15, 28, 37, 0.92);
+
+    --nds-petrol: #234c67;
+    --nds-petrol-300: #5a8fb2;
+    --nds-petrol-400: #356a8c;
+
+    --nds-apricot: #f4b27a;
+    --nds-apricot-hover: #f8cba3;
+    --nds-on-apricot: #3a2010;
+
+    --nds-fg-1: #f5f0f2;
+    --nds-fg-2: #c9d3da;
+    --nds-fg-3: #8fa1ad;
+    --nds-fg-disabled: #647884;
+
+    --nds-border-subtle: rgba(147, 188, 214, 0.1);
+    --nds-border-default: rgba(147, 188, 214, 0.18);
+    --nds-border-strong: rgba(147, 188, 214, 0.32);
+
+    --nds-danger-fg: #ff8f9c;
+    --nds-danger-bg: #3d161d;
+
+    --nds-focus-ring: 0 0 0 3px rgba(244, 178, 122, 0.45);
+
+    /* --- Typo, rayons, mouvement --- */
+    --nds-font: "Avenir Next", "Avenir", "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    --nds-font-mono: ui-monospace, Menlo, Consolas, monospace;
+    --nds-radius-control: 12px;
+    --nds-radius-card: 16px;
+    --nds-radius-frame: 24px;
+    --nds-radius-pill: 999px;
+    --nds-ease: 120ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* --- Icônes Lucide (outline 2px) --- */
+    --nds-icon-log-in: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10 17 5-5-5-5'/%3E%3Cpath d='M15 12H3'/%3E%3Cpath d='M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'/%3E%3C/svg%3E");
+    --nds-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+    --nds-icon-shield-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa1ad' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+    --nds-icon-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa1ad' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    --nds-icon-lock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa1ad' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+    --nds-icon-circle-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' x2='12' y1='8' y2='12'/%3E%3Cline x1='12' x2='12.01' y1='16' y2='16'/%3E%3C/svg%3E");
+
+    /* --- Variables PatternFly reprises par authentik --- */
+    --pf-global--FontFamily--sans-serif: var(--nds-font);
+    --pf-global--FontFamily--heading--sans-serif: var(--nds-font);
+    --pf-global--FontFamily--text: var(--nds-font);
+    --pf-global--FontFamily--heading: var(--nds-font);
+    --pf-global--link--Color: var(--nds-apricot);
+    --pf-global--link--Color--hover: var(--nds-apricot-hover);
+
+    color-scheme: dark;
+}
+
+/*
+ * Police Avenir Next (fichiers du design system, licence web à vérifier).
+ * Dépose les .otf dans un dossier servi par authentik (ex. /media/public/fonts/)
+ * puis décommente. Les @font-face sont lus depuis le <style> du document.
+ *
+@font-face { font-family: "Avenir Next"; src: url("/media/public/fonts/AvenirNextLTPro-Regular.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Avenir Next"; src: url("/media/public/fonts/AvenirNext-Medium.otf") format("opentype"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Avenir Next"; src: url("/media/public/fonts/AvenirNextLTPro-Demi.otf") format("opentype"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Avenir Next"; src: url("/media/public/fonts/AvenirNextLTPro-Bold.otf") format("opentype"); font-weight: 700; font-style: normal; font-display: swap; }
+ */
+
+/* ==========================================================================
+   2. Page [racine : document]
+   ========================================================================== */
+
+/* Couleur et halo de repli, visibles tant que l'image de fond du flow
+   (Admin > Flows > Background) n'est pas chargée ou absente.
+   Ne pas mettre de fond sur <html> : le fond de <body> doit rester celui du
+   canevas, sinon il masque l'image du flow. */
+body {
+    background:
+        radial-gradient(900px 500px at 50% -10%, rgba(35, 76, 103, 0.55), transparent 70%),
+        var(--nds-bg-page);
+    font-family: var(--nds-font);
+}
+
+/* ==========================================================================
+   3. Cadre de connexion [racine : ak-flow-executor]
+   ========================================================================== */
+
+.pf-c-login {
+    --ak-c-login--MaxWidth: 30rem; /* 480px : écran mot de passe et autres étapes */
+    --ak-c-login__main-ColumnWidth: minmax(
+        min(100%, var(--ak-c-login--MaxWidth)),
+        var(--ak-c-login--MaxWidth)
+    );
+    --ak-c-login--BackgroundColorOverlay: transparent;
+
+    font-family: var(--nds-font);
+}
+
+/* Étape d'identification avec source(s) : cadre large (880px). */
+.pf-c-login:has(ak-stage-identification) {
+    --ak-c-login--MaxWidth: 55rem;
+}
+
+.pf-c-login__main {
+    /* authentik ajoute cette marge basse sous la dernière étape */
+    --pf-c-login__main-footer--PaddingBottom: 0;
+
+    box-sizing: border-box;
+    width: 100%;
+    gap: 32px;
+    padding: 40px;
+    justify-content: flex-start;
+    background: var(--nds-frame-bg);
+    border: 1px solid var(--nds-border-default);
+    border-radius: var(--nds-radius-frame);
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    color: var(--nds-fg-2);
+    font-family: var(--nds-font);
+}
+
+
+.pf-c-login__main:has(> ak-stage-password) {
+    gap: 28px;
+}
+
+/* Logo de la brand */
+.pf-c-login__main-header.pf-c-brand {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.pf-c-login__main-header.pf-c-brand img,
+.pf-c-login__main-header.pf-c-brand .branding-logo {
+    display: block;
+    width: 240px;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+}
+
+/* Pied de page (liens de la brand, « Powered by ») et sélecteur de langue */
+.pf-c-login__footer {
+    color: var(--nds-fg-2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    font-family: var(--nds-font);
+    font-size: 13px;
+}
+
+/* Petits écrans : on garde le cadre, avec moins de marge. */
+@media (max-width: 45rem) {
+    .pf-c-login__main {
+        padding: 24px;
+        gap: 24px;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 35rem) {
+    .pf-c-login {
+        --ak-c-login__main-ColumnWidth: calc(100% - 24px);
+    }
+
+    .pf-c-login__main {
+        margin-block: 16px;
+    }
+}
+
+/* ==========================================================================
+   4. Carte d'étape [racine : ak-flow-card]
+   ========================================================================== */
+
+.pf-c-login__main-header:not(.pf-c-brand) {
+    grid-area: header;
+    padding: 0;
+    margin: 0 0 var(--nds-card-header-gap, 28px);
+    text-align: center;
+}
+
+.pf-c-title.pf-m-3xl {
+    margin: 0;
+    font-family: var(--nds-font);
+    font-size: var(--nds-title-size, 28px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: var(--nds-title-line-height, 1.15);
+    color: var(--nds-fg-1);
+    text-align: center;
+    text-wrap: balance;
+}
+
+.pf-c-login__main-body {
+    grid-area: form;
+    box-sizing: border-box;
+    padding: var(--nds-body-padding, 0);
+    background: var(--nds-body-bg, transparent);
+    border: var(--nds-body-border, 0);
+    border-bottom: var(--nds-body-border-bottom, var(--nds-body-border, 0));
+    border-radius: var(--nds-body-radius, 0);
+}
+
+/* Le pied de carte s'efface pour que sources et liens puissent être placés
+   dans la grille de l'étape d'identification. */
+.pf-c-login__main-footer {
+    display: contents;
+}
+
+/* ==========================================================================
+   5. Formulaires [racines : étapes ak-stage-*]
+   ========================================================================== */
+
+.pf-c-form {
+    gap: 16px;
+    font-family: var(--nds-font);
+    color: var(--nds-fg-2);
+}
+
+.pf-c-form > p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--nds-fg-2);
+}
+
+.pf-c-form__group {
+    gap: 6px;
+}
+
+.pf-c-form__group.pf-m-action {
+    margin-block-start: 4px;
+}
+
+.pf-c-form__label,
+.pf-c-form__label-text {
+    font-family: var(--nds-font);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--nds-fg-1);
+}
+
+.pf-c-form__label-required,
+.pf-c-form__label[aria-required="true"] .pf-c-form__label-text::after {
+    display: none;
+}
+
+/* Champs texte */
+.pf-c-form-control,
+.pf-c-form-control.pf-m-icon {
+    --pf-c-form-control--BorderTopColor: var(--nds-border-default);
+    --pf-c-form-control--BorderRightColor: var(--nds-border-default);
+    --pf-c-form-control--BorderBottomColor: var(--nds-border-default);
+    --pf-c-form-control--BorderLeftColor: var(--nds-border-default);
+
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 14px 0 40px;
+    font-family: var(--nds-font);
+    font-size: 15px;
+    color: var(--nds-fg-1);
+    background-color: var(--nds-bg-sunken);
+    background-image: var(--nds-input-icon, none);
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 16px 16px;
+    border: 1px solid var(--nds-border-default);
+    border-radius: var(--nds-radius-control);
+    outline: none;
+    box-shadow: none;
+    transition:
+        border-color var(--nds-ease),
+        box-shadow var(--nds-ease);
+}
+
+.pf-c-form-control::placeholder {
+    color: var(--nds-fg-disabled);
+    font-style: normal;
+    opacity: 1;
+}
+
+.pf-c-form-control:hover {
+    border-color: var(--nds-border-strong);
+}
+
+.pf-c-form-control:focus,
+.pf-c-form-control:focus-visible {
+    border-color: var(--nds-apricot);
+    box-shadow: var(--nds-focus-ring);
+    outline: none;
+}
+
+.pf-c-form-control[aria-invalid="true"],
+.pf-c-form-control[aria-invalid="true"]:hover {
+    border-color: var(--nds-danger-fg);
+    /* remplace l'icône d'erreur PatternFly par l'icône du champ */
+    background-image: var(--nds-input-icon, none) !important;
+    background-position: 14px center !important;
+    background-size: 16px 16px !important;
+    padding-inline-end: 14px;
+}
+
+/* Icônes des champs */
+input[name="uidField"] {
+    --nds-input-icon: var(--nds-icon-user);
+}
+
+input[type="password"],
+input[name="password"] {
+    --nds-input-icon: var(--nds-icon-lock);
+}
+
+/* Champ mot de passe : PatternFly enveloppe l'input dans un groupe */
+.pf-c-input-group {
+    background: transparent;
+    gap: 8px;
+}
+
+.pf-c-input-group > .pf-c-button.pf-m-control {
+    border-radius: var(--nds-radius-control);
+    background: var(--nds-surface-2);
+    color: var(--nds-fg-3);
+}
+
+.pf-c-input-group > .pf-c-button.pf-m-control::after {
+    border-color: var(--nds-border-default);
+    border-radius: var(--nds-radius-control);
+}
+
+/* Erreurs de champ */
+.pf-c-form__helper-text {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--nds-fg-3);
+}
+
+.pf-c-form__helper-text.pf-m-error {
+    color: var(--nds-danger-fg);
+}
+
+.pf-c-form__helper-text-icon {
+    display: none;
+}
+
+/* Erreurs générales (non liées à un champ) et alertes */
+.pf-c-alert.pf-m-danger,
+.pf-c-alert.pf-m-inline.pf-m-danger {
+    --pf-c-alert--BoxShadow: none;
+    --pf-c-alert--BackgroundColor: var(--nds-danger-bg);
+    --pf-c-alert__title--Color: var(--nds-danger-fg);
+    --pf-c-alert__icon--Color: var(--nds-danger-fg);
+
+    background: var(--nds-danger-bg);
+    color: var(--nds-danger-fg);
+    border: 0;
+    border-radius: var(--nds-radius-control);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.pf-c-alert.pf-m-danger::before {
+    display: none;
+}
+
+/* ==========================================================================
+   6. Boutons
+   ========================================================================== */
+
+.pf-c-button {
+    font-family: var(--nds-font);
+    transition:
+        background-color var(--nds-ease),
+        border-color var(--nds-ease),
+        color var(--nds-ease),
+        transform var(--nds-ease);
+}
+
+.pf-c-button:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+/* Bouton principal (abricot plein) */
+.pf-c-button.pf-m-primary {
+    --pf-c-button--m-primary--BackgroundColor: var(--nds-apricot);
+    --pf-c-button--m-primary--hover--BackgroundColor: var(--nds-apricot-hover);
+    --pf-c-button--m-primary--focus--BackgroundColor: var(--nds-apricot-hover);
+    --pf-c-button--m-primary--active--BackgroundColor: var(--nds-apricot-hover);
+    --pf-c-button--m-primary--Color: var(--nds-on-apricot);
+    --pf-c-button--m-primary--hover--Color: var(--nds-on-apricot);
+    --pf-c-button--m-primary--focus--Color: var(--nds-on-apricot);
+    --pf-c-button--m-primary--active--Color: var(--nds-on-apricot);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+    min-height: 48px;
+    padding: 0 24px;
+    background-color: var(--nds-apricot);
+    color: var(--nds-on-apricot);
+    border: 0;
+    border-radius: var(--nds-radius-pill);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.pf-c-button.pf-m-primary:hover:not(:disabled) {
+    background-color: var(--nds-apricot-hover);
+    color: var(--nds-on-apricot);
+}
+
+.pf-c-button:focus-visible {
+    outline: none;
+    box-shadow: var(--nds-focus-ring);
+}
+
+.pf-c-button.pf-m-primary:disabled {
+    opacity: 0.5;
+    background-color: var(--nds-apricot);
+    color: var(--nds-on-apricot);
+}
+
+/* Flèche à droite du bouton d'envoi. PatternFly utilise ::after pour la
+   bordure des boutons : on le réinitialise entièrement. */
+button[type="submit"].pf-c-button::after,
+.pf-c-button.pf-m-block[type="submit"]::after {
+    content: "";
+    position: static;
+    inset: auto;
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--nds-icon-arrow-right) center / contain no-repeat;
+    mask: var(--nds-icon-arrow-right) center / contain no-repeat;
+    pointer-events: none;
+}
+
+/* Bouton secondaire / contour */
+.pf-c-button.pf-m-secondary,
+.source-button:not(.source-button-promoted) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 20px;
+    background: transparent;
+    color: var(--nds-fg-1);
+    border: 1px solid var(--nds-border-strong);
+    border-radius: var(--nds-radius-pill);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pf-c-button.pf-m-secondary::after,
+.source-button:not(.source-button-promoted)::after {
+    display: none;
+}
+
+.pf-c-button.pf-m-secondary:hover,
+.source-button:not(.source-button-promoted):hover {
+    background: var(--nds-surface-2);
+    border-color: var(--nds-petrol-300);
+    color: var(--nds-fg-1);
+}
+
+/* Liens */
+a {
+    color: var(--nds-apricot);
+    text-decoration: none;
+    transition: color var(--nds-ease);
+}
+
+a:hover {
+    color: var(--nds-apricot-hover);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   7. Étape d'identification [racine : ak-stage-identification]
+   Écran 1 : service lié à gauche (mis en avant), identifiant à droite.
+   Prérequis : source avec « Promoted » coché dans l'admin authentik.
+   ========================================================================== */
+
+/* La carte passe en grille dès qu'il y a des sources. */
+ak-flow-card:has(> fieldset[name="login-sources"]) {
+    --nds-title-size: 36px;
+    --nds-title-line-height: 1.1;
+    --nds-card-header-gap: 32px;
+    --nds-body-bg: var(--nds-surface-2);
+    --nds-body-border: 1px solid var(--nds-border-subtle);
+    --nds-body-padding: 24px;
+    --nds-body-radius: var(--nds-radius-card);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-areas:
+        "header  header"
+        "sources form"
+        "sources band";
+    grid-template-rows: auto auto auto;
+    column-gap: 32px;
+    row-gap: 0;
+    align-items: start;
+}
+
+/* Le lien « mot de passe oublié » prolonge la carte de droite. */
+ak-flow-card:has(> fieldset[name="login-sources"]):has(> fieldset[name="additional-actions"]) {
+    --nds-body-radius: var(--nds-radius-card) var(--nds-radius-card) 0 0;
+    --nds-body-border-bottom: 0;
+}
+
+ak-flow-card:has(> fieldset[name="login-sources"]) > form.pf-c-form::before {
+    content: var(--nds-form-heading);
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--nds-fg-1);
+}
+
+/* « Continuer » en contour quand le service lié est le chemin principal. */
+ak-flow-card:has(> fieldset[name="login-sources"] .source-button-promoted)
+    > form
+    button[type="submit"].pf-c-button.pf-m-primary {
+    min-height: 40px;
+    background: transparent;
+    color: var(--nds-fg-1);
+    border: 1px solid var(--nds-border-strong);
+    font-size: 14px;
+}
+
+ak-flow-card:has(> fieldset[name="login-sources"] .source-button-promoted)
+    > form
+    button[type="submit"].pf-c-button.pf-m-primary:hover:not(:disabled) {
+    background: var(--nds-surface-2);
+    border-color: var(--nds-petrol-300);
+    color: var(--nds-fg-1);
+}
+
+/* Colonne des sources */
+fieldset[name="login-sources"] {
+    grid-area: sources;
+    align-self: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: 16px;
+    min-width: 0;
+    margin: 0;
+    padding: 0 !important;
+    border: 0;
+}
+
+fieldset[name="login-sources"]::before {
+    content: var(--nds-source-intro);
+    display: block;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--nds-fg-2);
+}
+
+fieldset[name="login-sources"]::after {
+    content: var(--nds-source-domain);
+    display: block;
+    padding-inline-start: 22px;
+    background: var(--nds-icon-shield-check) left center / 14px 14px no-repeat;
+    font-family: var(--nds-font-mono);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--nds-fg-3);
+}
+
+/* Bouton du service lié (élément principal) */
+.source-button.source-button-promoted {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 64px;
+    margin: 0;
+    gap: 8px;
+    font-size: 0; /* masque le libellé natif (non traduit) */
+}
+
+.source-button.source-button-promoted:last-of-type {
+    margin: 0;
+}
+
+.source-button.source-button-promoted::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    background-color: currentColor;
+    -webkit-mask: var(--nds-icon-log-in) center / contain no-repeat;
+    mask: var(--nds-icon-log-in) center / contain no-repeat;
+}
+
+.source-button.source-button-promoted::after {
+    content: var(--nds-source-label);
+    position: static;
+    inset: auto;
+    border: 0;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.source-button.source-button-promoted:focus-visible {
+    box-shadow: var(--nds-focus-ring);
+}
+
+/* Autres sources (non mises en avant) : boutons contour sous le principal */
+fieldset[name="login-sources"] .source-button:not(.source-button-promoted) {
+    width: 100%;
+}
+
+fieldset[name="login-sources"] .pf-c-button__icon img {
+    height: 18px;
+}
+
+/* Liens sous le formulaire (« mot de passe oublié », inscription) */
+fieldset[name="additional-actions"] {
+    grid-area: band;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 16px 0 0;
+    border: 0;
+    background: transparent;
+    font-size: 14px;
+    color: var(--nds-fg-2);
+    text-align: center;
+}
+
+ak-flow-card:has(> fieldset[name="login-sources"]) > fieldset[name="additional-actions"] {
+    padding: 0 24px 24px;
+    background: var(--nds-surface-2);
+    border: 1px solid var(--nds-border-subtle);
+    border-top: 0;
+    border-radius: 0 0 var(--nds-radius-card) var(--nds-radius-card);
+}
+
+.pf-c-login__main-footer-band-item {
+    margin: 0;
+    padding: 0;
+}
+
+/* Une seule colonne sous ~720px : service lié en premier. */
+@media (max-width: 45rem) {
+    ak-flow-card:has(> fieldset[name="login-sources"]) {
+        --nds-title-size: 28px;
+        --nds-card-header-gap: 24px;
+
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "header"
+            "sources"
+            "form"
+            "band";
+    }
+
+    fieldset[name="login-sources"] {
+        margin-block-end: 24px;
+    }
+}
+
+/* ==========================================================================
+   8. Étape mot de passe [racines : ak-stage-password, ak-form-static]
+   ========================================================================== */
+
+ak-flow-card:has(> form > ak-form-static) {
+    --nds-title-size: 28px;
+}
+
+/* Pastille de l'utilisateur sélectionné */
+ak-form-static {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 8px 18px 8px 8px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    background: var(--nds-surface-2);
+    border: 1px solid var(--nds-border-subtle);
+    border-radius: var(--nds-radius-pill);
+}
+
+ak-form-static [slot="link"] a {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* [racine : ak-form-static] */
+.primary-content {
+    gap: 12px;
+    min-width: 0;
+}
+
+.primary-content .pf-c-avatar {
+    --pf-c-avatar--Width: 36px;
+    --pf-c-avatar--Height: 36px;
+
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--nds-petrol);
+}
+
+/* Avatar par défaut : pastille pétrole avec une icône utilisateur. */
+.primary-content:not(:has(.pf-c-avatar))::before {
+    content: "";
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--nds-icon-user) center / 18px 18px no-repeat, var(--nds-petrol);
+}
+
+.username {
+    font-family: var(--nds-font);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--nds-fg-1);
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+}
+
+/* Bouton « Continuer » de l'étape mot de passe */
+fieldset.pf-c-form__group.pf-m-action {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
