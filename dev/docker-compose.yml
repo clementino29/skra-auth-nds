@@ -4,7 +4,7 @@ services:
     environment: {POSTGRES_PASSWORD: pgpass, POSTGRES_USER: authentik, POSTGRES_DB: authentik}
     healthcheck: {test: ["CMD-SHELL","pg_isready -U authentik"], interval: 5s, retries: 10}
   server:
-    image: authentik/server:2026.8.7
+    image: authentik/server:2026.8.6
     command: server
     environment: &env
       AUTHENTIK_SECRET_KEY: change-me-dev-only-0000000000000000000000000
@@ -23,7 +23,7 @@ services:
     ports: ["9000:9000"]
     depends_on: {postgresql: {condition: service_healthy}}
   worker:
-    image: authentik/server:2026.8.7
+    image: authentik/server:2026.8.6
     command: worker
     environment: *env
     user: root

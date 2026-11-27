@@ -7,7 +7,7 @@ Thème **Nohriancons** (« Sakura ») pour les pages de connexion d'**authentik*
 | ![Identification](docs/captures/identification.jpg) | ![Mot de passe](docs/captures/mot-de-passe.jpg) | ![Mobile](docs/captures/mobile-identification.jpg) |
 
 Tout le thème tient dans un seul fichier : [`nohriancons-authentik.css`](nohriancons-authentik.css).
-Il a été vérifié sur **authentik 2026.8.7** (captures ci-dessus prises sur une vraie instance).
+Il a été vérifié sur **authentik 2026.8.6** (captures ci-dessus prises sur une vraie instance).
 
 ## Installation
 
@@ -60,7 +60,7 @@ Ces points viennent de textes natifs d'authentik, que le CSS ne peut pas changer
 
 ## Tester en local
 
-`dev/` lance une instance authentik 2026.8.7 jetable, configurée comme les maquettes :
+`dev/` lance une instance authentik 2026.8.6 jetable, configurée comme les maquettes :
 
 ```bash
 docker compose -f dev/docker-compose.yml up -d

@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------
  * À coller dans : Admin authentik > Système > Brands > (ta brand) > Custom CSS.
  *
- * Vérifié sur authentik 2026.8.7. authentik injecte ce CSS dans le document ET
+ * Vérifié sur authentik 2026.8.6. authentik injecte ce CSS dans le document ET
  * dans chaque shadow root de ses web components : chaque règle ci-dessous ne
  * s'applique donc qu'aux éléments du shadow root où elle trouve une
  * correspondance. Les commentaires « [racine : …] » indiquent dans quel
